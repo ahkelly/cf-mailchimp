@@ -20,7 +20,7 @@ I have only tested on Adobe ColdFusion 11. I am confident that the wrapper will 
 ```
 mc = new mailchimp(
 	apiKey = "YOURAPIKEY",	// see http://kb.mailchimp.com/accounts/management/about-api-keys
-	serviceURL = "https://us1.api.mailchimp.com/3.0/",
+	apiHost = "https://us1.api.mailchimp.com/3.0/",
 	debug = true			// note debug setting
 );
 
