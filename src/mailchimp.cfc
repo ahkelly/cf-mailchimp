@@ -16,7 +16,7 @@
 
 
 component displayname="MailChimp" {
-	variables.apiHost = "https://us1.api.mailchimp.com/3.0/";
+	variables.apiHost = "";
 	variables.apiKey = "";
 	variables.debug = false;
 
@@ -141,9 +141,15 @@ component displayname="MailChimp" {
 	) {
 		local.url = variables.apiHost & arguments.endpoint & structToQueryString(arguments.params);
 
-		if (variables.debug) { writeOutput("HTTP GET: " & local.url & "<br>"); }
-
-		httpService = new http(url=local.url, method="get", password=variables.apiKey, username="");
+		if (variables.debug) { 
+      writeOutput("HTTP GET (apiHost): " & variables.apiHost & "<br>");
+      writeOutput("HTTP GET (endpoint): " & arguments.endpoint & "<br>");
+      writeOutput("HTTP GET: " & local.url & "<br>"); 
+    }
+    
+		httpService = new http(url=local.url, method="get", timeout=10);
+		httpService.addParam(type="header", name="Content-Type", value="application/json");
+		httpService.addParam(type="header",name="Authorization", value="apikey #variables.apiKey#");
 		httpContent = httpService.send().getPrefix().fileContent;
 		responseJson = deserializeJSON(httpContent);
 
@@ -163,8 +169,9 @@ component displayname="MailChimp" {
 			writeDump(serializeJson(arguments.data));
 		}
 
-		httpService = new http(url=local.url, method="put", password=variables.apiKey, username="");
-
+		httpService = new http(url=local.url, method="put");
+		httpService.addParam(type="header", name="Content-Type", value="application/json");
+		httpService.addParam(type="header",name="Authorization", value="apikey #variables.apiKey#");
 		httpService.addParam(type="body", value=serializeJson(arguments.data));
 
 		httpService = httpService.send();
@@ -191,9 +198,7 @@ component displayname="MailChimp" {
 		}
 
 		httpService = new http(url=local.url, method="post", password=variables.apiKey, username="");
-
 		httpService.addParam(type="body", value=serializeJson(data));
-
 		httpService = httpService.send();
 
 		if (variables.debug) { writeDump(httpService); }
