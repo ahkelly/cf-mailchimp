@@ -141,12 +141,12 @@ component displayname="MailChimp" {
 	) {
 		local.url = variables.apiHost & arguments.endpoint & structToQueryString(arguments.params);
 
-		if (variables.debug) { 
+		if (variables.debug) {
       writeOutput("HTTP GET (apiHost): " & variables.apiHost & "<br>");
       writeOutput("HTTP GET (endpoint): " & arguments.endpoint & "<br>");
-      writeOutput("HTTP GET: " & local.url & "<br>"); 
+      writeOutput("HTTP GET: " & local.url & "<br>");
     }
-    
+
 		httpService = new http(url=local.url, method="get", timeout=10);
 		httpService.addParam(type="header", name="Content-Type", value="application/json");
 		httpService.addParam(type="header",name="Authorization", value="apikey #variables.apiKey#");
@@ -154,6 +154,18 @@ component displayname="MailChimp" {
 		responseJson = deserializeJSON(httpContent);
 
 		return responseJson;
+	}
+
+	// Retrieves all campaigns
+	public function getCampaigns() {
+		return get("campaigns");
+	}
+
+	// Retrieves content for a specified campaign
+	public function getCampaignContent(
+		required string campaignId
+	) {
+		return get("campaigns/" & arguments.campaignId & "/content");
 	}
 
 	// Performs a generic HTTP PUT operation
@@ -173,13 +185,11 @@ component displayname="MailChimp" {
 		httpService.addParam(type="header", name="Content-Type", value="application/json");
 		httpService.addParam(type="header",name="Authorization", value="apikey #variables.apiKey#");
 		httpService.addParam(type="body", value=serializeJson(arguments.data));
-
 		httpService = httpService.send();
 
 		if (variables.debug) { writeDump(httpService); }
 
 		httpContent = httpService.getPrefix().fileContent;
-
 		responseJson = deserializeJSON(httpContent);
 
 		return responseJson;
