@@ -1,6 +1,6 @@
 /*
 * ColdFusion MailChimp API 3.0 wrapper
-* v1.0.0
+* v1.0.1
 * https://github.com/kevindb/cf-mailchimp
 *
 * ColdFusion wrapper for the MailChimp 3.0 API
@@ -59,6 +59,28 @@ component displayname="MailChimp" {
 		return get("lists/" & arguments.listId);
 	}
 
+	// Retrieves a list of interest categories (group titles) for a specified list
+	public function getListInterestCategories(
+		required string listId
+	) {
+		return get("lists/" & arguments.listId & "/interest-categories");
+	}
+
+	// Retrieves a details for an interest category for a specified list
+	public function getListInterestCategoryDetails(
+		required string listId
+		required string interestCategoryId
+	) {
+		return get("lists/" & arguments.listId & "/interest-categories/"  & arguments.interestCategoryId);
+	}
+
+	// Retrieves interest for an interest category for a specified list
+	public function getListInterestCategoryInterests(
+		required string listId
+		required string interestCategoryId
+	) {
+		return get("lists/" & arguments.listId & "/interest-categories/"  & arguments.interestCategoryId & '/interests');
+	}
 
 	// MailChimp Member calls
 	// http://developer.mailchimp.com/documentation/mailchimp/reference/lists/members/
